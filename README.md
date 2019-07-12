@@ -1,2 +1,2 @@
-# book-bot
-A Telegram Bot to help you find your next adventure 📖
+# Sinbad the Sailor
+A Telegram Bot to help you find your next adventure 📜
