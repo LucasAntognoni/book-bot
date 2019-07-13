@@ -1,14 +1,28 @@
-from flask import Flask, request
+import os
+import re
 
-app = Flask(__name__)
+class Bot(object):
 
-@app.route('/', methods=['POST'])
-def main():
-    data = request.get_json()
-    
-    print(data)
-    
-    return 'ok'
+    BOT_URL = 'https://api.telegram.org/bot' + os.environ['BOT_TOKEN'] + '/'
 
-if __name__ == '__main__':
-    app.run()
+    def __init__(self):
+        self.parser = re.compile('^\/(?:(\S+)|)\s?([\s\S]*)$')
+
+    def get_chat_id(self, data):
+        return data['message']['chat']['id']
+
+    def get_message(self, data):
+        return data['message']['text']
+
+    def get_username(self, data):
+        return  data['message']['chat']['username']
+
+    def send_message(self, data):
+        message_url = self.BOT_URL + 'sendMessage'
+        requests.post(message_url, json=data)
+
+    def parse_message(self, data):
+        parsed_message = self.parser.match(data)
+        return parsed_message.group(1), parsed_message.group(2)
+        
+
