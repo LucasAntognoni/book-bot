@@ -25,4 +25,5 @@ class Bot(object):
         parsed_message = self.parser.match(data)
         return parsed_message.group(1), parsed_message.group(2)
         
-
+    def prepare_response(self, chat, message):
+        pass

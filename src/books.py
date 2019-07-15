@@ -4,27 +4,25 @@ import requests
 class Books(object):
 
     BASE_URL = "https://www.googleapis.com/books/v1/volumes?q="
-    FILTERS = [
-        "intitle",
-        "inauthor",
-        "inpublisher",
-        "subject",
-        "isbn",
-        "lccn",
-        "oclc"
-        ]
+    SEARCH_FIELDS = {
+        "title": "intitle",
+        "author": "inauthor",
+        "publisher": "inpublisher",
+        "subject": "subject",
+        "isbn": "isbn",
+    }
 
     def __init__(self):
         pass
 
-    def search(self, filter, query):
+    def search(self, field, query):
 
         """
             Search book on Google Books API
 
             Parameters
             ----------
-                filter
+                field
                     Search field 
 
                 query
@@ -36,18 +34,18 @@ class Books(object):
                     Search results in JSON format if successful, None o/w
         """
 
-        if filter in self.FILTERS:
-
+        if self.SEARCH_FIELDS[field]:
+            
             try:
-        
                 response = requests.get(self.BASE_URL + query)
 
                 if response.status_code == 200:
                     return response.json()
         
             except requests.exceptions.RequestException as e:        
-                # print(e)
                 return None
 
-        # print('Unsuported search field!')
         return None
+
+    def process_search(self, field, data):
+        pass
