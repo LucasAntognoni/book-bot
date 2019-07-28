@@ -1,5 +1,7 @@
 import os
 import re
+import requests
+
 
 class Bot(object):
 
@@ -15,15 +17,21 @@ class Bot(object):
         return data['message']['text']
 
     def get_username(self, data):
-        return  data['message']['chat']['username']
-
-    def send_message(self, data):
-        message_url = self.BOT_URL + 'sendMessage'
-        requests.post(message_url, json=data)
+        return data['message']['chat']['username']
 
     def parse_message(self, data):
         parsed_message = self.parser.match(data)
         return parsed_message.group(1), parsed_message.group(2)
-        
-    def prepare_response(self, chat, message):
-        pass
+
+    def prepare_response(self, chat, answer):
+
+        response = {
+            "chat_id": chat,
+            "text": answer,
+        }
+
+        return response
+
+    def send_message(self, data):
+        message_url = self.BOT_URL + 'sendMessage'
+        requests.post(message_url, json=data)
