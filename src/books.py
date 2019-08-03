@@ -1,6 +1,5 @@
 import requests
 
-
 class Books(object):
     BASE_URL = 'https://www.googleapis.com/books/v1/volumes?q="{}"&printType={}&projection={}&maxResults={}'
 
@@ -19,7 +18,6 @@ class Books(object):
     BOOK_FIELDS = [
         'title',
         'authors',
-        'genres',
         'categories',
         'description',
     ]
@@ -27,18 +25,24 @@ class Books(object):
     def __init__(self):
         pass
 
+    def get_attribute(self, data, attribute, default_value):
+        return data.get(attribute) or default_value
+
     def process_search(self, data):
 
-        book = {
-            'title': data['title'],
-            'description': data['description'],
-            'thumbnail': data['thumbnail']
-        }
+        book = {}
 
-        if len(data['authors']) > 1:
-            book['authors'] = ', '.join(data['authors'])
-        else:
-            book['authors'] = data['authors'][0]
+        for field in self.BOOK_FIELDS:
+
+            book[field] = self.get_attribute(data, field, '')
+
+            if field == ('authors' or 'categories'):
+                if len(book[field]) > 1:
+                    book[field] = ', '.join(book[field])
+                else:
+                    book[field] = book[field][0]
+
+        print(book)
 
         return book
 
