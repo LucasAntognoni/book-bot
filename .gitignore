@@ -107,3 +107,4 @@ venv.bak/
 ngrok/
 .vscode/
 stuff/
+.idea/
