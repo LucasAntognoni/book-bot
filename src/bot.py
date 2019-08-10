@@ -11,21 +11,21 @@ class Bot(object):
         self.parser = re.compile('^\/(?:(\S+)|)\s?([\s\S]*)$')
         self.last_update_id = 0
 
-    def get_chat_id(self, data):
-        return data['message']['chat']['id']
+    def get_chat_id(self, data, field):
+        return data[field]['chat']['id']
 
-    def get_message(self, data):
-        return data['message']['text']
+    def get_message(self, data, field):
+        return data[field]['text']
 
-    def get_username(self, data):
-        return data['message']['chat']['username']
+    def get_username(self, data, field):
+        return data[field]['chat']['username']
 
     def parse_message(self, data):
         parsed_message = self.parser.match(data)
         return parsed_message.group(1), parsed_message.group(2)
 
     def get_updates(self):
-        
+
         updates_url = self.BOT_URL + 'getUpdates'
         payload = {'offset': self.last_update_id}
 
@@ -39,17 +39,22 @@ class Bot(object):
             print(e)
             return None
 
-    def positive_response(self, chat, answer):
+    def build_response(self, data):
 
-        f = open("../resources/response.html", "r")
-        html = f.read()
-        f.close()
+        html = ''
+        html += '<b>' + data['title'] + '</b>'
+        html += '<i> by ' + data['authors'] + '</i>\n\n'
+        html += '<b>Categories: </b>' + '<i>' + data['categories'] + '</i>\n\n'
+        html += '<b>Description: </b>' + '<i>' + data['description'] + '</i>\n\n'
+        html += '<a href="' + data['imageLinks'] + '">📖</a>'
 
-        html = html % (answer['title'], answer['authors'], answer['description'], answer['thumbnail'])
+        return html
+
+    def positive_response(self, chat, book):
 
         response = {
             "chat_id": chat,
-            "text": html,
+            "text": self.build_response(book),
             "parse_mode": "HTML"
         }
 
@@ -59,7 +64,7 @@ class Bot(object):
 
         response = {
             "chat_id": chat,
-            "text": 'Sorry, i could not find anything!',
+            "text": 'Sorry, i could not find any books!',
         }
 
         return response

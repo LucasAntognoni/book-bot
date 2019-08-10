@@ -9,7 +9,6 @@ def main():
 
     while(True):
 
-        print(bot.last_update_id)
         updates = bot.get_updates()
         
         if updates:
@@ -18,15 +17,21 @@ def main():
 
             for update in updates:
 
-                message = bot.get_message(update)
+                if 'edited_message' in update:
+                    message_field = 'edited_message'
+                else:
+                    message_field = 'message'
+
+                message = bot.get_message(update, message_field)
+
                 command, text = bot.parse_message(message)
                 result = books.search(command, text)
 
                 if result:
-                    response = bot.positive_response(bot.get_chat_id(update), result)
+                    response = bot.positive_response(bot.get_chat_id(update, message_field), result)
                     bot.send_message(response)
                 else:
-                    response = bot.negative_response(bot.get_chat_id(update))
+                    response = bot.negative_response(bot.get_chat_id(update, message_field))
                     bot.send_message(response)
 
 
